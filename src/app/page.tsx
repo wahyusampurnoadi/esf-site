@@ -3,7 +3,7 @@ import Image from "next/image";
 import ParallaxImage from "@/components/ParallaxImage";
 import Link from "next/link";
 
-const WA_NUMBER = "6285867613040";
+const WA_NUMBER = "6285747804795";
 const IG_HANDLE = "editseputarfoto";
 const BRAND = "ESF — Edit Seputar Foto";
 
