@@ -1,26 +1,54 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Base style untuk seluruh halaman (tema ungu muda) */
+@layer base {
+  html { color-scheme: light; }
+  html { scroll-behavior: smooth; }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    @apply bg-purple-50 text-neutral-900 font-sans antialiased;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ==== Marquee utilities ==== */
+@keyframes marquee-x {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* geser setengah karena konten diduplikasi */
 }
+
+@layer utilities {
+  .marquee      { width: max-content; display: flex; animation: marquee-x 48s linear infinite; }
+  .marquee-slow { animation-duration: 40s; }
+  .marquee-rev  { animation-direction: reverse; }
+  .marquee:hover,
+  .marquee-slow:hover { animation-play-state: paused; } /* pause saat hover */
+}
+
+/* ==== Hero background utilities ==== */
+@layer utilities {
+  /* Grid halus (ungu transparan) */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(124, 58, 237, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(124, 58, 237, 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* Mask lembut supaya grid memudar di tepi */
+  .mask-fade {
+    -webkit-mask-image: radial-gradient(80% 80% at 50% 50%, #000 60%, transparent 100%);
+            mask-image: radial-gradient(80% 80% at 50% 50%, #000 60%, transparent 100%);
+  }
+}
+
+/* ==== Fancy cursor helpers ==== */
+@layer base {
+  /* agar bisa menyembunyikan kursor OS saat fancy cursor aktif */
+  body.cursor-none { cursor: none; }
+}
+
+@layer components {
+  .cursor-ring-hover { transform: scale(1.15); border-color: rgb(124 58 237); }
+}
+
+
