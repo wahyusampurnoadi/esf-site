@@ -51,4 +51,26 @@
   .cursor-ring-hover { transform: scale(1.15); border-color: rgb(124 58 237); }
 }
 
+/* ==== 3D text + float ==== */
+@keyframes float-y {
+  0%   { transform: translateY(0) rotateX(0) rotateY(0); }
+  50%  { transform: translateY(-6px) rotateX(2deg) rotateY(-2deg); }
+  100% { transform: translateY(0) rotateX(0) rotateY(0); }
+}
+
+@layer utilities {
+  /* efek extrude dengan text-shadow berlapis */
+  .text-3d-purple {
+    color: #fff;
+    text-shadow:
+      0 1px 0 #a78bfa,
+      0 2px 0 #8b5cf6,
+      0 3px 0 #7c3aed,
+      0 4px 0 #6d28d9,
+      0 8px 16px rgba(0,0,0,.25);
+  }
+  .float-soft { animation: float-y 5s ease-in-out infinite; }
+}
+
+
 

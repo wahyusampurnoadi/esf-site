@@ -1,7 +1,9 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import ParallaxImage from "@/components/ParallaxImage";
-import Link from "next/link";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const WA_NUMBER = "6285747804795";
 const IG_HANDLE = "editseputarfoto";
@@ -17,16 +19,16 @@ const SERVICES = [
 ];
 
 const PORTFOLIO = [
-  { src: "/portfolio/pasfoto.jpg",        title: "Pasfoto — Background Biru" },
-  { src: "/portfolio/wisuda.jpg",         title: "Foto Wisuda" },
-  { src: "/portfolio/ganti-background.jpg", title: "Ganti Background" },
-  { src: "/portfolio/restorasi.jpg",      title: "Restorasi — Foto Lama" },
-  { src: "/portfolio/newborn.jpg",        title: "Foto Newborn" },
-  { src: "/portfolio/pernikahan.jpg",     title: "Foto Pernikahan" },
+  { src: "/portfolio/pasfoto.jpg",           title: "Pasfoto — Background Biru" },
+  { src: "/portfolio/wisuda.jpg",            title: "Foto Wisuda" },
+  { src: "/portfolio/ganti-background.jpg",  title: "Ganti Background" },
+  { src: "/portfolio/restorasi.jpg",         title: "Restorasi — Foto Lama" },
+  { src: "/portfolio/newborn.jpg",           title: "Foto Newborn" },
+  { src: "/portfolio/pernikahan.jpg",        title: "Foto Pernikahan" },
 ];
 
 const TESTIMONIALS = [
-  { name: "Dina — Lamaran Kerja", text: "Hasil pasfoto rapi banget, background biru pas standar! Respon cepat dan ramah." },
+  { name: "Dina — Lamaran Kerja", text: "Hasil pasfoto rapi banget, background biru pas standar serta respon admin cepat dan ramah." },
   { name: "Rizky — Buku Nikah",  text: "Ganti pakaian ke jas + hijab rapi, sangat natural. Harga oke, prosesnya cepat." },
   { name: "Bu Sari — UMKM",      text: "Foto menu jadi bersih dan menarik, penjualan ikut naik. Recommended!" },
   { name: "Andi — CPNS",         text: "Pasfoto 3x4 sesuai ketentuan CPNS, rapi dan tajam. Prosesnya kilat." },
@@ -34,7 +36,7 @@ const TESTIMONIALS = [
   { name: "Fajar — Wisuda",      text: "Retouch wajah halus tapi tetap natural. Cocok untuk cetak dan upload." },
   { name: "Nisa — Ganti Background", text: "Background merah jadi putih mulus, pinggiran rambut rapi sekali." },
   { name: "Rudi — Ganti Pakaian",text: "Ubah ke jas hitam + dasi tampak nyata, tidak kelihatan hasil edit." },
-  { name: "Vina — Retouch Wajah",text: "Jerawat dan bekas hitam hilang, kulit tetap realistis, tidak plastik." },
+  { name: "Vina — Retouch Wajah",text: "Jerawat dan bekas hitam hilang, kulit tetap realistis." },
   { name: "Pak Budi — Restorasi",text: "Foto lama robek dipulihkan jadi jernih. Keluarga saya terharu lihat hasilnya." },
   { name: "Sinta — KTP & KK",    text: "Pasfoto sesuai persyaratan, ukuran file dan warna sudah diatur rapi." },
   { name: "Kevin — Katalog Produk", text: "Cut-out bersih, bayangan produk halus. Katalog terlihat profesional." },
@@ -85,45 +87,108 @@ function InstagramButton() {
   );
 }
 
+// ==== HEADER (mobile hamburger) ====
+function SiteHeader() {
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = open ? "hidden" : prev || "";
+    return () => { document.body.style.overflow = prev || ""; };
+  }, [open]);
+
+  const close = () => setOpen(false);
+
+  return (
+    <header
+      data-cursor="ignore"
+      className="sticky top-0 z-50 border-b border-purple-100 bg-purple-50/80 backdrop-blur"
+    >
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+        <a href="/" className="flex items-center gap-3" aria-label="ESF — Edit Seputar Foto">
+          <Image src="/logo-esf.png" alt="" width={36} height={36} className="h-9 w-9" priority />
+          <span className="sr-only">ESF — Edit Seputar Foto</span>
+        </a>
+
+        <nav className="hidden md:flex items-center gap-6 text-sm">
+          <a href="#services" className="hover:opacity-70">Layanan</a>
+          <a href="#portfolio" className="hover:opacity-70">Portofolio</a>
+          <a href="#testi" className="hover:opacity-70">Testimoni</a>
+          <a href="#faq" className="hover:opacity-70">FAQ</a>
+          <a href="#order" className="hover:opacity-70">Order</a>
+        </nav>
+
+        <div className="hidden md:block">
+          <WhatsAppButton />
+        </div>
+
+        <button
+        data-cursor="ignore"
+        onClick={() => setOpen(v => !v)}
+        aria-expanded={open}
+        aria-controls="mobile-nav"
+        aria-label={open ? "Tutup menu" : "Buka menu"}
+        className={[
+          "md:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl transition",
+          "shadow-sm z-[60]", // pastikan di atas overlay
+          open
+            ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 border border-transparent"
+            : "border border-purple-200 bg-white/80 text-purple-700"
+        ].join(" ")}
+      >
+        {open ? (
+          // ikon CLOSE (X) – putih & lebih tebal
+          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2.6} strokeLinecap="round">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        ) : (
+          // ikon HAMBURGER
+          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        )}
+      </button>
+
+      </div>
+
+      <div
+        onClick={close}
+        className={`md:hidden fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity
+          ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+      />
+
+      <div
+        id="mobile-nav"
+        className={`md:hidden fixed z-50 inset-x-0 top-[56px]
+          origin-top bg-white/95 backdrop-blur border-b border-purple-100
+          transition-all duration-200
+          ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
+      >
+        <div className="px-4 py-4 grid gap-2">
+          <a onClick={close} href="#services" className="py-2 text-[15px]">Layanan</a>
+          <a onClick={close} href="#portfolio" className="py-2 text-[15px]">Portofolio</a>
+          <a onClick={close} href="#testi" className="py-2 text-[15px]">Testimoni</a>
+          <a onClick={close} href="#faq" className="py-2 text-[15px]">FAQ</a>
+          <a onClick={close} href="#order" className="py-2 text-[15px]">Order</a>
+
+          <div className="mt-2 pt-3 border-t border-purple-100">
+            <div onClick={close} className="w-full">
+              <WhatsAppButton />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-transparent text-inherit">
       {/* Navbar */}
-      <header
-  data-cursor="ignore"
-  className="sticky top-0 z-40 backdrop-blur border-b border-purple-100 bg-purple-50/80"
->
-  <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-    {/* KIRI: LOGO */}
-    <Link href="/" className="flex items-center gap-3" aria-label={BRAND}>
-      <Image
-        src="/portfolio/logo-esf.png"   // ganti nama file jika perlu
-        alt=""
-        width={56}
-        height={56}
-        priority
-        className="h-9 w-9"
-      />
-      {/* Teks pendamping (opsional, tampil di ≥sm) */}
-      {/* <span className="hidden sm:block font-semibold">ESF — Edit Seputar Foto</span> */}
-      <span className="sr-only">{BRAND}</span>
-    </Link>
+      <SiteHeader />
 
-    {/* TENGAH: NAV */}
-    <nav className="hidden md:flex items-center gap-6 text-sm">
-      <a href="#services" className="hover:opacity-70">Layanan</a>
-      <a href="#portfolio" className="hover:opacity-70">Portofolio</a>
-      <a href="#testi" className="hover:opacity-70">Testimoni</a>
-      <a href="#faq" className="hover:opacity-70">FAQ</a>
-      <a href="#order" className="hover:opacity-70">Order</a>
-    </nav>
-
-    {/* KANAN: CTA WA */}
-    <WhatsAppButton />
-  </div>
-</header>
-
-      {/* Hero (krem cerah + background hidup) */}
+      {/* Hero */}
       <section className="relative overflow-hidden">
         {/* background layers */}
         <div className="pointer-events-none absolute inset-0 -z-10">
@@ -142,36 +207,53 @@ export default function LandingPage() {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 pt-10 md:pt-8 pb-12 md:pb-10">
-          {/* kartu hero krem (opsional) */}
-          
-            <div className="grid md:grid-cols-2 gap-10 items-center">
-              <div className="md:translate-y-[-12px]">
-                <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-neutral-900">
-                  Jasa Edit Foto Cepat, Rapi, <span className="text-purple-600">Amanah</span>
-                </h1>
-                <p className="mt-4 text-lg text-neutral-700">
-                  ESF membantu pasfoto, ganti pakaian, hilangkan glare kacamata, restorasi, hingga foto produk untuk UMKM.
-                </p>
-                <div className="mt-6 flex gap-3">
-                  <WhatsAppButton text="Halo ESF, saya minat edit foto. Boleh info paket & harga?" />
-                  <InstagramButton />
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            {/* kolom teks */}
+            <div className="md:translate-y-[-12px]">
+              <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-neutral-900">
+                Jasa Edit Foto Cepat, Rapi, <span className="text-purple-600">Amanah</span>
+              </h1>
+              <p className="mt-4 text-lg text-neutral-700">
+                ESF membantu pasfoto, ganti pakaian, hilangkan glare kacamata, restorasi, hingga foto produk untuk UMKM.
+              </p>
+              <div className="mt-6 flex gap-3">
+                <WhatsAppButton text="Halo ESF, saya minat edit foto. Boleh info paket & harga?" />
+                <InstagramButton />
+              </div>
+            </div>
+
+            {/* kolom gambar hero */}
+            <div className="relative flex items-center justify-center">
+              <ParallaxImage
+                src="/model.png"
+                alt="Contoh hasil edit foto ESF"
+                width={420}
+                height={520}
+                strength={0.22}
+                clamp={70}
+                tiltMax={12}
+                tiltScale={1.04}
+                className="drop-shadow-xl"
+                priority
+              />
+
+              {/* BADGE 1 */}
+              <div aria-hidden className="pointer-events-none absolute top-12 right-4 md:top-52 md:right-24">
+                <div
+                  className="float-soft rounded-2xl px-4 py-3 md:px-5 md:py-4
+                             bg-white/80 border border-purple-200 backdrop-blur-md
+                             shadow-xl shadow-purple-300/30"
+                  style={{ transform: "rotate(-2deg)" }}
+                >
+                  <div className="text-purple-600 text-[26px] md:text-[34px] font-extrabold leading-none">
+                    700+
+                  </div>
+                  <div className="mt-0.5 text-[10px] md:text-xs font-semibold uppercase tracking-wide text-purple-700">
+                    customer puas!
+                  </div>
                 </div>
               </div>
-
-              <div className="flex items-center justify-center">
-                <ParallaxImage
-                  src="/model.png"
-                  alt="Contoh hasil edit foto ESF"
-                  width={420}
-                  height={520}
-                  strength={0.22}   /* parallax scroll */
-                  clamp={70}
-                  tiltMax={8}      /* derajat maksimum miring */
-                  tiltScale={1.04}  /* skala saat hover */
-                  className="drop-shadow-xl"
-                  priority
-                />
-              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -193,7 +275,12 @@ export default function LandingPage() {
       <section id="portfolio" className="scroll-mt-24 max-w-6xl mx-auto px-4 py-14">
         <div className="flex items-end justify-between gap-3">
           <h2 className="text-2xl font-bold text-purple-700">Portofolio</h2>
-          <a href={`https://instagram.com/${IG_HANDLE}`} target="_blank" rel="noopener noreferrer" className="text-sm text-purple-700 hover:underline">
+          <a
+            href={`https://instagram.com/${IG_HANDLE}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-purple-700 hover:underline"
+          >
             Lihat lebih banyak di Instagram →
           </a>
         </div>
@@ -277,6 +364,8 @@ export default function LandingPage() {
       <footer className="border-t border-purple-200 py-6 text-center text-sm bg-purple-50">
         © {new Date().getFullYear()} {BRAND}. All rights reserved.
       </footer>
+
+      <ScrollToTop />
     </main>
   );
 }
