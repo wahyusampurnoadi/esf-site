@@ -107,7 +107,7 @@ function SiteHeader() {
     >
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
       <Link href="/" className="flex items-center gap-3" aria-label="ESF — Edit Seputar Foto">
-        <Image src="/logo-esf.svg" alt="" width={36} height={36} className="h-9 w-9" priority />
+        <Image src="/logo-esf.png" alt="" width={36} height={36} className="h-9 w-9" priority />
         <span className="sr-only">ESF — Edit Seputar Foto</span>
       </Link>
 
