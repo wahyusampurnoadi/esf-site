@@ -1,127 +1,132 @@
 "use client";
 
+import * as React from "react";
 import Image, { ImageProps } from "next/image";
-import { useEffect, useRef, useState } from "react";
 
-type Props = Omit<ImageProps, "style"> & {
-  /** kekuatan parallax saat scroll (0.10–0.40 enak) */
+type ParallaxImageProps = Omit<ImageProps, "alt"> & {
+  alt?: string;
+  /** seberapa kuat parallax, default 0.22 */
   strength?: number;
-  /** batas gerak parallax (px) */
+  /** batas maksimal translasi Y (px), default 70 */
   clamp?: number;
-  /** maksimal derajat miring saat hover (deg) */
+  /** rotasi maksimum (derajat) saat hover, default 12 */
   tiltMax?: number;
-  /** scale saat hover */
+  /** skala saat hover, default 1.04 */
   tiltScale?: number;
+  /** tambahan class untuk wrapper (bukan untuk <Image>) */
   className?: string;
 };
 
+/**
+ * ParallaxImage
+ * - Parallax saat scroll (translateY lembut)
+ * - Efek tilt 3D saat hover (desktop saja)
+ */
 export default function ParallaxImage({
+  alt = "",
   strength = 0.22,
-  clamp = 60,
+  clamp = 70,
   tiltMax = 12,
   tiltScale = 1.04,
-  className,
+  className = "",
   ...imgProps
-}: Props) {
-  const outerRef = useRef<HTMLDivElement>(null); // untuk parallax (translateY)
-  const tiltRef = useRef<HTMLDivElement>(null);  // untuk 3D tilt (rotate/scale)
-  const glareRef = useRef<HTMLDivElement>(null);
+}: ParallaxImageProps) {
+  const wrapRef = React.useRef<HTMLDivElement | null>(null);
+  const innerRef = React.useRef<HTMLDivElement | null>(null);
 
-  const pos = useRef({ x: 0, y: 0 });
-  const target = useRef({ x: 0, y: 0 });
-  const [enabled, setEnabled] = useState(false);
+  // nonaktifkan tilt di perangkat pointer "coarse"
+  const [tiltEnabled, setTiltEnabled] = React.useState(false);
 
-  // ------ Scroll Parallax ------
-  useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const small = window.innerWidth < 768; // nonaktif di mobile
-    if (reduce || small) return;
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(pointer: fine)");
+    setTiltEnabled(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setTiltEnabled(e.matches);
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
 
-    setEnabled(true);
-    const el = outerRef.current!;
-    let ticking = false;
+  // Parallax on scroll
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const el = wrapRef.current;
+    const inner = innerRef.current;
+    if (!el || !inner) return;
+
+    let raf = 0;
 
     const update = () => {
-      if (!el) return;
       const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const centerOffset = rect.top + rect.height / 2 - vh / 2;
-      const offset = Math.max(-clamp, Math.min(clamp, -centerOffset * strength));
-      el.style.transform = `translateY(${offset}px)`;
-      ticking = false;
-    };
-
-    const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(update);
-        ticking = true;
+      const vh = window.innerHeight || 1;
+      // delta jarak dari center viewport
+      const delta = rect.top + rect.height / 2 - vh / 2;
+      let ty = delta * strength;
+      if (clamp > 0) {
+        ty = Math.max(-clamp, Math.min(clamp, ty));
       }
+
+      // apply transform—yang tilt akan ditambahkan oleh handler mouse
+      const prev = inner.style.transform || "";
+      // buang komponen translateY sebelumnya (jaga agar tilt masih berlaku)
+      const clean = prev.replace(/translateY\([^)]+\)\s*/g, "").trim();
+      inner.style.transform = `translateY(${ty.toFixed(2)}px) ${clean}`;
+      raf = requestAnimationFrame(update);
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    onScroll();
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
+    raf = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(raf);
   }, [strength, clamp]);
 
-  // ------ Hover 3D Tilt ------
-  useEffect(() => {
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-
-    const container = outerRef.current!;
-    const inner = tiltRef.current!;
-    const glare = glareRef.current!;
+  // Tilt 3D saat hover (desktop)
+  React.useEffect(() => {
+    if (!tiltEnabled) return;
+    const el = wrapRef.current;
+    const inner = innerRef.current;
+    if (!el || !inner) return;
 
     const onMove = (e: MouseEvent) => {
-      const r = inner.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width;   // 0..1
-      const py = (e.clientY - r.top) / r.height;   // 0..1
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = (e.clientX - cx) / (r.width / 2);
+      const dy = (e.clientY - cy) / (r.height / 2);
 
-      const rotX = (0.5 - py) * 2 * tiltMax;       // -tilt..tilt
-      const rotY = (px - 0.5) * 2 * tiltMax;
+      const rotX = Math.max(-1, Math.min(1, -dy)) * tiltMax;
+      const rotY = Math.max(-1, Math.min(1, dx)) * tiltMax;
 
-      inner.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${tiltScale})`;
-      glare.style.opacity = "1";
-      glare.style.background = `radial-gradient(400px 400px at ${px * 100}% ${
-        py * 100
-      }%, rgba(255,255,255,0.35), transparent 60%)`;
+      // gabungkan dengan translateY yang sudah diset efek parallax
+      const current = inner.style.transform || "";
+      const base = current.replace(/rotate[XY]\([^)]+\)|scale\([^)]+\)/g, "").trim();
+      inner.style.transform = `${base} rotateX(${rotX.toFixed(
+        2
+      )}deg) rotateY(${rotY.toFixed(2)}deg) scale(${tiltScale})`;
+      inner.style.transformStyle = "preserve-3d";
     };
 
     const onLeave = () => {
-      inner.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
-      glare.style.opacity = "0";
+      // buang rotate & scale; sisakan translateY dari efek parallax
+      const current = inner.style.transform || "";
+      inner.style.transform = current
+        .replace(/rotate[XY]\([^)]+\)|scale\([^)]+\)/g, "")
+        .trim();
     };
 
-    container.addEventListener("mousemove", onMove);
-    container.addEventListener("mouseleave", onLeave);
-
+    el.addEventListener("mousemove", onMove);
+    el.addEventListener("mouseleave", onLeave);
     return () => {
-      container.removeEventListener("mousemove", onMove);
-      container.removeEventListener("mouseleave", onLeave);
+      el.removeEventListener("mousemove", onMove);
+      el.removeEventListener("mouseleave", onLeave);
     };
-  }, [tiltMax, tiltScale]);
+  }, [tiltEnabled, tiltMax, tiltScale]);
 
   return (
     <div
-      ref={outerRef}
-      className="will-change-transform"
-      style={{ transform: "translateY(0px)", perspective: "900px" }}
+      ref={wrapRef}
+      className={`relative will-change-transform [perspective:1000px] ${className}`}
     >
-      <div
-        ref={tiltRef}
-        className="relative will-change-transform transition-transform duration-200 ease-out"
-        style={{ transformStyle: "preserve-3d" }}
-      >
-        <Image {...imgProps} className={className} />
-        {/* glare highlight */}
-        <div
-          ref={glareRef}
-          className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-200"
-        />
+      <div ref={innerRef} className="will-change-transform">
+        {/* alt default "" supaya lulus a11y lint bila dekoratif */}
+        <Image alt={alt} {...imgProps} />
       </div>
     </div>
   );

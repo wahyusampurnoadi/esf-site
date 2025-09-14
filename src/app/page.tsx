@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import ParallaxImage from "@/components/ParallaxImage";
 import ScrollToTop from "@/components/ScrollToTop";
+import Link from "next/link";
 
 const WA_NUMBER = "6285747804795";
 const IG_HANDLE = "editseputarfoto";
@@ -105,10 +106,11 @@ function SiteHeader() {
       className="sticky top-0 z-50 border-b border-purple-100 bg-purple-50/80 backdrop-blur"
     >
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-        <a href="/" className="flex items-center gap-3" aria-label="ESF — Edit Seputar Foto">
-          <Image src="/logo-esf.png" alt="" width={36} height={36} className="h-9 w-9" priority />
-          <span className="sr-only">ESF — Edit Seputar Foto</span>
-        </a>
+      <Link href="/" className="flex items-center gap-3" aria-label="ESF — Edit Seputar Foto">
+        <Image src="/logo-esf.svg" alt="" width={36} height={36} className="h-9 w-9" priority />
+        <span className="sr-only">ESF — Edit Seputar Foto</span>
+      </Link>
+
 
         <nav className="hidden md:flex items-center gap-6 text-sm">
           <a href="#services" className="hover:opacity-70">Layanan</a>
