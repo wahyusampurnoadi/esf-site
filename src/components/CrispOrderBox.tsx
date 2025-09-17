@@ -1,25 +1,21 @@
-"use client";
-
-import * as React from "react";
+'use client';
+import * as React from 'react';
 
 export default function CrispOrderBox() {
   const [msg, setMsg] = React.useState(
-    ""
+    ''
   );
   const [sending, setSending] = React.useState(false);
 
   const sendToCrisp = () => {
     if (!window.$crisp) {
-      alert("Chat belum siap. Coba lagi dalam 1–2 detik.");
+      alert('Chat belum siap. Coba lagi dalam 1–2 detik.');
       return;
     }
     setSending(true);
-    // buka widget
-    window.$crisp.push(["do", "chat:open"]);
-    // kirim pesan awal sebagai user
-    window.$crisp.push(["do", "message:send", ["text", msg]]);
-    // fokus ke widget
-    window.$crisp.push(["do", "chat:show"]);
+    window.$crisp.push(['do', 'chat:open']);
+    window.$crisp.push(['do', 'message:send', ['text', msg]]);
+    window.$crisp.push(['do', 'chat:show']);
     setTimeout(() => setSending(false), 600);
   };
 
@@ -44,7 +40,7 @@ export default function CrispOrderBox() {
         disabled={sending}
         className="mt-4 inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-60 shadow-lg shadow-purple-600/30 transition"
       >
-        {sending ? "Membuka chat..." : "Kirim ke Live Chat"}
+        {sending ? 'Membuka chat...' : 'Kirim ke Live Chat'}
       </button>
     </div>
   );

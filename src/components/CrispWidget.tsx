@@ -1,58 +1,47 @@
-"use client";
-import { useEffect } from "react";
+'use client';
 
+import { useEffect } from 'react';
+
+/**
+ * Tugas: geser posisi widget Crisp agar tidak nubruk tombol ScrollToTop.
+ * Tombol ScrollToTop beri atribut: data-scrolltop pada elemen tombolnya.
+ */
 export default function CrispWidget() {
   useEffect(() => {
-    // Load Crisp sekali
-    if (!window.$crisp) {
-      window.$crisp = [];
-      window.CRISP_WEBSITE_ID = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID!;
-      const s = document.createElement("script");
-      s.src = "https://client.crisp.chat/l.js";
-      s.async = true;
-      document.head.appendChild(s);
-    }
+    const GAP = 12;     // jarak dari tombol ke widget
+    const MIN_Y = 80;   // minimal offset vertikal
 
-    // Hitung jarak aman dari tombol scroll-top
     const applyOffset = () => {
-      try {
-        const GAP = 20;           // jarak aman antar elemen
-        const MIN_Y = 120;        // minimal naik dari bawah
-        const btn = document.getElementById("scrolltop-fab");
-        let y = MIN_Y;
+      const btn = document.querySelector<HTMLElement>('[data-scrolltop]');
+      let y = MIN_Y;
 
-        if (btn) {
-          const rect = btn.getBoundingClientRect();
-          const distFromBottom = window.innerHeight - rect.top; // px dari bawah ke atas tombol
-          y = Math.max(MIN_Y, distFromBottom + GAP);
-        }
+      if (btn) {
+        const rect = btn.getBoundingClientRect();
+        // jarak dari atas tombol ke bawah viewport
+        const distFromBottom = window.innerHeight - rect.top;
+        y = Math.max(MIN_Y, distFromBottom + GAP);
+      }
 
-        // x = jarak dari kanan, y = jarak dari bawah (dalam px)
-        window.$crisp.push(["config", "position:offset", [16, y]]);
-      } catch {}
+      // geser widget Crisp ke (x=16, y=perhitungan di atas)
+      window.$crisp?.push(['config', 'position:offset', [16, y]]);
     };
 
-    // Jalankan saat siap
-    const boot = setInterval(() => {
-      if (window.$crisp?.push) {
+    // Tunggu sampai script Crisp siap, lalu set offset + pasang listener
+    const boot = window.setInterval(() => {
+      if (window.$crisp) {
         applyOffset();
-        // Re-apply saat chat open/close (Crisp kadang reset posisinya)
-        window.$crisp.push(["on", "chat:opened", applyOffset]);
-        window.$crisp.push(["on", "chat:closed", applyOffset]);
-        clearInterval(boot);
+        window.$crisp.push(['on', 'chat:opened', applyOffset]);
+        window.clearInterval(boot);
       }
-    }, 150);
+    }, 400);
 
-    // Re-apply saat resize & scroll (muncul/hilangnya tombol)
+    // re-apply saat resize
     const onResize = () => applyOffset();
-    const onScroll = () => applyOffset();
-    window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
 
     return () => {
-      clearInterval(boot);
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onScroll);
+      window.clearInterval(boot);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 

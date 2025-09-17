@@ -1,18 +1,25 @@
-"use client";
-import { useEffect } from "react";
+'use client';
+import { useEffect } from 'react';
+
+const SITE_ID = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID || '';
 
 export default function CrispChat() {
   useEffect(() => {
-    if ((window as any).$crisp) return;
-    (window as any).$crisp = [];
-    (window as any).CRISP_WEBSITE_ID = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID!;
-    const s = document.createElement("script");
-    s.src = "https://client.crisp.chat/l.js";
-    s.async = true;
-    document.head.appendChild(s);
+    if (typeof window === 'undefined' || !SITE_ID) return;
 
-    // geser bubble supaya tidak nabrak tombol ScrollToTop
-    (window as any).$crisp.push(["config", "position:offset", [0, 96]]);
+    if (!window.$crisp) {
+      window.$crisp = [] as unknown as CrispQueue; // queue awal
+    }
+    window.CRISP_WEBSITE_ID = SITE_ID;
+
+    if (!document.getElementById('crisp-widget')) {
+      const s = document.createElement('script');
+      s.id = 'crisp-widget';
+      s.src = 'https://client.crisp.chat/l.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
   }, []);
+
   return null;
 }
