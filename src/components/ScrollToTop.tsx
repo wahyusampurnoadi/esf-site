@@ -30,11 +30,12 @@ export default function ScrollToTop() {
 
   return (
     <button
+      id="scrolltop-fab"
       onClick={goTop}
       aria-label="Kembali ke atas"
       data-cursor="ignore"
       className={[
-        "fixed right-4 bottom-5 z-50 h-12 w-12 rounded-full",
+        "fixed right-5 bottom-22 z-50 h-12 w-12 rounded-full",
         "shadow-lg transition-all",
         show ? "opacity-100 translate-y-0" : "opacity-0 pointer-events-none translate-y-3",
       ].join(" ")}

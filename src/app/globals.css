@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-/* Base style untuk seluruh halaman (tema ungu muda) */
+/* =========================
+   Base style (tema ungu muda)
+   ========================= */
 @layer base {
   html { color-scheme: light; }
   html { scroll-behavior: smooth; }
@@ -8,9 +10,14 @@
   body {
     @apply bg-purple-50 text-neutral-900 font-sans antialiased;
   }
+
+  /* agar bisa menyembunyikan kursor OS saat fancy cursor aktif */
+  body.cursor-none { cursor: none; }
 }
 
-/* ==== Marquee utilities ==== */
+/* =========================
+   Marquee
+   ========================= */
 @keyframes marquee-x {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); } /* geser setengah karena konten diduplikasi */
@@ -24,7 +31,9 @@
   .marquee-slow:hover { animation-play-state: paused; } /* pause saat hover */
 }
 
-/* ==== Hero background utilities ==== */
+/* =========================
+   Hero background helpers
+   ========================= */
 @layer utilities {
   /* Grid halus (ungu transparan) */
   .bg-grid {
@@ -41,17 +50,16 @@
   }
 }
 
-/* ==== Fancy cursor helpers ==== */
-@layer base {
-  /* agar bisa menyembunyikan kursor OS saat fancy cursor aktif */
-  body.cursor-none { cursor: none; }
-}
-
+/* =========================
+   Fancy cursor helpers
+   ========================= */
 @layer components {
   .cursor-ring-hover { transform: scale(1.15); border-color: rgb(124 58 237); }
 }
 
-/* ==== 3D text + float ==== */
+/* =========================
+   3D text + float
+   ========================= */
 @keyframes float-y {
   0%   { transform: translateY(0) rotateX(0) rotateY(0); }
   50%  { transform: translateY(-6px) rotateX(2deg) rotateY(-2deg); }
@@ -72,5 +80,48 @@
   .float-soft { animation: float-y 5s ease-in-out infinite; }
 }
 
+/* =========================
+   CRISP — geser bubble agar
+   tidak nabrak tombol FAB
+   ========================= */
 
+/* Variabel jarak aman untuk FAB scroll-to-top (default 56px + gap 16px + extra 24px) */
+:root {
+  --fab-size: 56px;
+  --fab-gap: 16px;
+  --crisp-extra: 24px; /* bisa kamu turunkan/naikkan */
+  --crisp-safe-bottom: calc(var(--fab-size) + var(--fab-gap) + var(--crisp-extra) + env(safe-area-inset-bottom, 0px));
+}
 
+/* Crisp menempelkan #crisp-chatbox di <body>.
+   Pakai !important karena Crisp menulis inline style juga. */
+#crisp-chatbox {
+  bottom: var(--crisp-safe-bottom) !important;
+  right: 16px !important;            /* sesuaikan bila perlu */
+  z-index: 2147483646 !important;    /* tetap di atas konten, tapi masih di bawah modals full-screen kamu kalau ada */
+}
+
+/* Di layar kecil, biasanya FAB lebih dekat tepi—naikkan sedikit lagi */
+@media (max-width: 640px) {
+  :root {
+    --fab-size: 56px;
+    --fab-gap: 16px;
+    --crisp-extra: 40px; /* lebih tinggi di mobile */
+  }
+}
+
+/* =========================
+   (Opsional) kelas util kalau
+   mau geser FAB scroll-to-top
+   ========================= */
+/* Tambahkan class "scrolltop-safe" pada container tombol scroll-to-top
+   kalau kamu ingin memindah FAB, bukan Crisp-nya. */
+.scrolltop-safe {
+  right: 16px;
+  bottom: calc(var(--fab-gap) + env(safe-area-inset-bottom, 0px));
+}
+@media (max-width: 640px) {
+  .scrolltop-safe {
+    bottom: calc(112px + env(safe-area-inset-bottom, 0px)); /* contoh: dorong ke atas 112px di mobile */
+  }
+}

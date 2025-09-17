@@ -4,7 +4,9 @@ import React from "react";
 import Image from "next/image";
 import ParallaxImage from "@/components/ParallaxImage";
 import ScrollToTop from "@/components/ScrollToTop";
+import CrispOrderBox from "@/components/CrispOrderBox";
 import Link from "next/link";
+type Testi = { name: string; text: string; avatar: string };
 
 const WA_NUMBER = "6285747804795";
 const IG_HANDLE = "editseputarfoto";
@@ -28,22 +30,22 @@ const PORTFOLIO = [
   { src: "/portfolio/pernikahan.jpg",        title: "Foto Pernikahan" },
 ];
 
-const TESTIMONIALS = [
-  { name: "Dina — Lamaran Kerja", text: "Hasil pasfoto rapi banget, background biru pas standar serta respon admin cepat dan ramah." },
-  { name: "Rizky — Buku Nikah",  text: "Ganti pakaian ke jas + hijab rapi, sangat natural. Harga oke, prosesnya cepat." },
-  { name: "Bu Sari — UMKM",      text: "Foto menu jadi bersih dan menarik, penjualan ikut naik. Recommended!" },
-  { name: "Andi — CPNS",         text: "Pasfoto 3x4 sesuai ketentuan CPNS, rapi dan tajam. Prosesnya kilat." },
-  { name: "Maya — Visa & Paspor",text: "Ukuran dan background pas, diterima tanpa revisi di kantor imigrasi. Mantap!" },
-  { name: "Fajar — Wisuda",      text: "Retouch wajah halus tapi tetap natural. Cocok untuk cetak dan upload." },
-  { name: "Nisa — Ganti Background", text: "Background merah jadi putih mulus, pinggiran rambut rapi sekali." },
-  { name: "Rudi — Ganti Pakaian",text: "Ubah ke jas hitam + dasi tampak nyata, tidak kelihatan hasil edit." },
-  { name: "Vina — Retouch Wajah",text: "Jerawat dan bekas hitam hilang, kulit tetap realistis." },
-  { name: "Pak Budi — Restorasi",text: "Foto lama robek dipulihkan jadi jernih. Keluarga saya terharu lihat hasilnya." },
-  { name: "Sinta — KTP & KK",    text: "Pasfoto sesuai persyaratan, ukuran file dan warna sudah diatur rapi." },
-  { name: "Kevin — Katalog Produk", text: "Cut-out bersih, bayangan produk halus. Katalog terlihat profesional." },
-  { name: "Alifa — Newborn",     text: "Tone warna hangat, kulit bayi lembut dan cerah. Hasilnya cantik sekali." },
-  { name: "Arif — Foto Ijazah",  text: "Penyesuaian seragam dan background sesuai kampus. Siap print besar." },
-  { name: "Tania — LinkedIn & CV", text: "Headshot profesional, pencahayaan diperbaiki. Profil saya jadi lebih meyakinkan." },
+const TESTIMONIALS: Testi[] = [
+  { name: "Dina — Lamaran Kerja",  text: "Hasil pasfoto rapi banget, background biru pas standar serta respon admin cepat dan ramah.", avatar: "/avatars/dina.jpg" },
+  { name: "Rizky — Buku Nikah",    text: "Ganti pakaian ke jas + hijab rapi, sangat natural. Harga oke, prosesnya cepat.",             avatar: "/avatars/rizky.jpg" },
+  { name: "Bu Sari — UMKM",        text: "Foto menu jadi bersih dan menarik, penjualan ikut naik. Recommended!",                        avatar: "/avatars/bu-sari.jpg" },
+  { name: "Andi — CPNS",           text: "Pasfoto 3x4 sesuai ketentuan CPNS, rapi dan tajam. Prosesnya kilat.",                          avatar: "/avatars/andi.jpg" },
+  { name: "Maya — Visa & Paspor",  text: "Ukuran dan background pas, diterima tanpa revisi di kantor imigrasi. Mantap!",                 avatar: "/avatars/maya.jpg" },
+  { name: "Fajar — Wisuda",        text: "Retouch wajah halus tapi tetap natural. Cocok untuk cetak dan upload.",                        avatar: "/avatars/fajar.jpg" },
+  { name: "Nisa — Ganti Background", text: "Background merah jadi putih mulus, pinggiran rambut rapi sekali.",                           avatar: "/avatars/nisa.jpg" },
+  { name: "Rudi — Ganti Pakaian",  text: "Ubah ke jas hitam + dasi tampak nyata, tidak kelihatan hasil edit.",                           avatar: "/avatars/rudi.jpg" },
+  { name: "Vina — Retouch Wajah",  text: "Jerawat dan bekas hitam hilang, kulit tetap realistis.",                                        avatar: "/avatars/vina.jpg" },
+  { name: "Pak Budi — Restorasi",  text: "Foto lama robek dipulihkan jadi jernih. Keluarga saya terharu lihat hasilnya.",                avatar: "/avatars/pak-budi.jpg" },
+  { name: "Sinta — KTP & KK",      text: "Pasfoto sesuai persyaratan, ukuran file dan warna sudah diatur rapi.",                         avatar: "/avatars/sinta.jpg" },
+  { name: "Kevin — Katalog Produk", text: "Cut-out bersih, bayangan produk halus. Katalog terlihat profesional.",                        avatar: "/avatars/kevin.jpg" },
+  { name: "Alifa — Newborn",       text: "Tone warna hangat, kulit bayi lembut dan cerah. Hasilnya cantik sekali.",                      avatar: "/avatars/alifa.jpg" },
+  { name: "Arif — Foto Ijazah",    text: "Penyesuaian seragam dan background sesuai kampus. Siap print besar.",                          avatar: "/avatars/arif.jpg" },
+  { name: "Tania — LinkedIn & CV", text: "Headshot profesional, pencahayaan diperbaiki. Profil saya jadi lebih meyakinkan.",             avatar: "/avatars/tania.jpg" },
 ];
 
 const FAQS = [
@@ -107,7 +109,7 @@ function SiteHeader() {
     >
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
       <Link href="/" className="flex items-center gap-3" aria-label="ESF — Edit Seputar Foto">
-        <Image src="/logo-esf.png" alt="" width={36} height={36} className="h-9 w-9" priority />
+        <Image src="/logo-esf.png" alt="" width={36} height={36} className="h-10 w-10" priority />
         <span className="sr-only">ESF — Edit Seputar Foto</span>
       </Link>
 
@@ -355,11 +357,12 @@ export default function LandingPage() {
 
       {/* CTA Order */}
       <section id="order" className="scroll-mt-24 max-w-6xl mx-auto px-4 py-14 text-center">
-        <h2 className="text-2xl font-bold text-purple-700">Siap mulai? Kirim fotonya sekarang</h2>
-        <p className="mt-2 text-neutral-700">Klik tombol di bawah untuk konsultasi gratis & cek kebutuhan Anda.</p>
-        <div className="mt-6 flex justify-center gap-3">
-          <WhatsAppButton text="Halo ESF, saya ingin konsultasi edit foto." />
-          <InstagramButton />
+        <h2 className="text-2xl font-bold text-purple-700">Siap mulai? Konsultasi sekarang</h2>
+        <p className="mt-2 text-neutral-700">
+          Tulis pesan singkat, lalu lanjutkan chat. Foto bisa kamu lampirkan langsung di chat.
+        </p>
+        <div className="mt-6">
+          <CrispOrderBox />
         </div>
       </section>
 
