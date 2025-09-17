@@ -19,7 +19,7 @@ declare global {
   // Listener event
   type CrispOnCommand = ['on', string, (...args: unknown[]) => void];
 
-  // ➜ Perintah "config" untuk geser widget (ini yang bikin error sebelumnya)
+  // ➜ Perintah "config" untuk geser widget
   type CrispConfigCommand =
     | ['config', 'position:offset', [number, number]] // [x, y]
     | ['config', 'zindex', [number]];
